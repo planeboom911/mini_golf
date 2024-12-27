@@ -28,7 +28,7 @@ let Canvas = {
 
   stroke: function(path, color, width = 1) {
     this.ctx.beginPath()
-    this.ctx.fillStyle = color
+    this.ctx.strokeStyle = color
     this.ctx.lineWidth = width
     this.ctx.stroke(path)
   }

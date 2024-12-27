@@ -1,61 +1,61 @@
 
-let Projectile = {
-  x: -1,
-  y: -1,
-  velX: 0,
-  velY: 0,
-  maxVel: 30,
-  maxVelX: Math.sqrt(30*30 *2),
-  maxVelY: Math.sqrt(30*30 *2)
-}
 
-let Physics = {
-  delta: 0
-}
 
 Canvas.elem.addEventListener('mousemove', function(e) {
-  if (!Mouse.primary) return;
-  let x = e.pageX - Canvas.elem.offsetLeft
-  let y = e.pageY - Canvas.elem.offsetTop
-
-  let rX = (x - Projectile.x) * 0.8
-  let rY = (y - Projectile.y) * 0.8
-
-  Projectile.velX = Math.max(Math.min(Projectile.maxVelX, rX), -Projectile.maxVelX)
-  Projectile.velY = Math.max(Math.min(Projectile.maxVelY, rY), -Projectile.maxVelY)
+  
+  MouseMoveEvent.forEach(async func => {
+    func(e);
+  })
 
 })
 
 Canvas.elem.addEventListener('mousedown', function(e) {
-  Projectile.x = e.pageX - Canvas.elem.offsetLeft
-  Projectile.y = e.pageY - Canvas.elem.offsetTop
-  Projectile.velX = 0
-  Projectile.velY = 0
+
+  MouseDownEvent.forEach(async func => {
+    func(e);
+  })
+
+})
+
+Canvas.elem.addEventListener('mouseup', function(e) {
+
+  MouseUpEvent.forEach(async func => {
+    func(e);
+  })
+
 })
 
 let Game = {
   prevTick: undefined,
   particleSpeed: 10,
-  
+  prevDelta: 1,
+  time: 0
 }
 
 function Gameloop(tick) {
-  let delta;
+
+  let delta = 1;
+  let tickDiff = (tick - (Game.prevTick ?? 0))
   if ( Game.prevTick !== undefined) {
-    delta = tick - Game.prevTick;
+    delta = Game.prevDelta == 1 ? tick : tickDiff / delta
   }
+
+  delta = delta / 1000
+
+  Game.prevDelta = delta
   Game.prevTick = tick;
 
+  Physics.forEach(physicsFunc => {
+    physicsFunc(delta)
+  })
+
   Canvas.clear()
-
-  if ( Mouse.primary ) {
-    let line = Shape.new();
-    line.moveTo(Projectile.x, Projectile.y)
-    line.lineTo(Projectile.x + Projectile.velX, Projectile.y + Projectile.velY);
-    Canvas.stroke(line, 'black', 2)
-  }
-
+  Drawables.forEach(drawFunc => {
+    drawFunc();
+  })
+  
   requestAnimationFrame(Gameloop)
 }
 
+// Start the game right away
 requestAnimationFrame(Gameloop)

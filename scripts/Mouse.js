@@ -1,9 +1,6 @@
 
 let Mouse = {
-  secondary: false,
   primary: false,
-  x: -1,
-  y: -1
 }
 
 function Mouse__set_button_state(e) {
