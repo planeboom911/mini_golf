@@ -1,5 +1,9 @@
 /* ========== Physics equations in code ========== */
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * max + min)
+}
+
 function getTangentPoints(px, py, cx, cy, r) {
   px -= cx
   py -= cy

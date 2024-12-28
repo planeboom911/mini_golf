@@ -57,5 +57,10 @@ function Gameloop(tick) {
   requestAnimationFrame(Gameloop)
 }
 
+
+
 // Start the game right away
-requestAnimationFrame(Gameloop)
+setTimeout(async () => {
+  await Level__init();
+  requestAnimationFrame(Gameloop);
+})

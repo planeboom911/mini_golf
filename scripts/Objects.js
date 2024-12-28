@@ -1,4 +1,52 @@
 
+/* ========== Level object ========== */
+let curLevel = {
+  index: 0,
+}
+
+async function Level__init() {
+  
+  curLevel.index = getRandomInt(0, Levels.length)
+  let level = Levels[curLevel.index]
+
+  let [golfX, golfY] = level.golfPos
+  let [holeX, holeY] = level.holePos
+  
+  GolfBall.x = golfX
+  GolfBall.y = golfY
+  
+  Hole.x = holeX
+  Hole.y = holeY
+
+  return true;
+}
+
+function Level__draw() {
+  let level = Levels[curLevel.index];
+  level.walls.forEach(function(points) {
+    let [x, y] = points[0]
+    let polygon = Shape.polygon(x, y, points.slice(1))
+    Canvas.fill(polygon, 'red')
+  })
+}
+
+Drawables.push(Level__draw)
+
+/* ========== Hole object ========== */
+let Hole = {
+  x: 100,
+  y: 50,
+  r: 20,
+  color: 'black'
+}
+
+function Hole__draw() {
+  let circle = Shape.circle(Hole.x, Hole.y, Hole.r);
+  Canvas.fill(circle, Hole.color)
+}
+
+Drawables.push(Hole__draw)
+
 /* ========== GolfBall object ========== */
 let GolfBall = {
   x: 300,
@@ -56,7 +104,12 @@ function GolfBall__init() {
 }
 
 function GolfBall__drag(e) {
-  if (!Mouse.primary) return;
+
+  if (!Mouse.primary) {
+    GolfBall.holding = false;
+    return
+  };
+
   let [cx, cy] = [GolfBall.x, GolfBall.y]
   let [px, py] = [e.pageX - Canvas.elem.offsetLeft, e.pageY - Canvas.elem.offsetTop]
   
@@ -82,6 +135,9 @@ function GolfBall__drag(e) {
 }
 
 function GolfBall__shouldMove() {
+  
+  if (!GolfBall.holding ) return false;
+
   let [cx, cy] = [GolfBall.x, GolfBall.y]
   let [px, py] = [GolfBall.eX, GolfBall.eY]
 
